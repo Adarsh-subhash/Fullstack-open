@@ -1,34 +1,44 @@
+
 ```mermaid
 sequenceDiagram
-    participant Browser
-    participant Server
+    participant user
+    participant browser
+    participant server
 
-    Browser->>Browser: User enters note in text field
-    Browser->>Server: HTTP POST /exampleapp/new_note
-    activate Server
-    Note right of Server: Server processes and stores the new note
-    Server-->>Browser: Redirect to /exampleapp/notes
-    deactivate Server
+    user->>browser: Write note and click Save
+    Note right of browser: Browser captures the user input and prepares to send it to the server
 
-    Browser->>Server: HTTP GET /exampleapp/notes
-    activate Server
-    Server-->>Browser: HTML document
-    deactivate Server
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note with note data
+    activate server
+    Note right of server: Server receives the new note data and saves it
+    server-->>browser: HTTP 302 Redirect to /notes
+    deactivate server
 
-    Browser->>Server: HTTP GET /exampleapp/main.css
-    activate Server
-    Server-->>Browser: main.css
-    deactivate Server
+    Note right of browser: Browser follows the redirect and reloads the notes page
 
-    Browser->>Server: HTTP GET /exampleapp/main.js
-    activate Server
-    Server-->>Browser: main.js
-    deactivate Server
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
+    activate server
+    server-->>browser: HTML document
+    deactivate server
 
-    Browser->>Browser: Execute main.js
-    Browser->>Server: HTTP GET /exampleapp/data.json
-    activate Server
-    Server-->>Browser: JSON data (updated with new note)
-    deactivate Server
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
+    activate server
+    server-->>browser: the css file
+    deactivate server
 
-    Browser->>Browser: Render updated notes on the page
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.js
+    activate server
+    server-->>browser: the JavaScript file
+    deactivate server
+
+    Note right of browser: The browser starts executing the JavaScript code that fetches the JSON from the server
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
+    activate server
+    server-->>browser: [{ "content": "HTML is easy", "date": "2023-1-1" }, { "content": "new note", "date": "2024-5-30" }, ... ]
+    deactivate server
+
+    Note right of browser: The browser executes the callback function that renders the notes
+
+
+```
